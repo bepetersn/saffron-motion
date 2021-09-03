@@ -9,3 +9,8 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
+@app.cli.command("init-db")
+def init_db(name):
+    # TODO: Put schema.sql into sqlite 
+    pass
