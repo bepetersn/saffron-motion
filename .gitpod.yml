@@ -14,7 +14,7 @@ tasks:
   - init: |
       cd saffron_motion && npm install
     command: |
-      cd saffron_motion && npm start
+      npm start
 
 vscode:
   extensions:
