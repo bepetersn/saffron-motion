@@ -1,3 +1,3 @@
 # Saffron Motion
 
-Web app providing cryptocurrency price predictions 
+Integrated web app for productivity / task management 
