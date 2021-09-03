@@ -1,13 +1,13 @@
 ports:
   - port: 5000
-    onOpen: open-preview
+  - port: 3000
 
 tasks:
   - before: |
-      export FLASK_APP=backend
+      export FLASK_APP=backend:app
       export FLASK_ENV=development
     init: |
-      pip install -e .
+      pip install -e backend
       flask init-db
     command: |
       flask run
