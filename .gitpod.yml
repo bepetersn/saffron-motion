@@ -11,6 +11,10 @@ tasks:
       flask init-db
     command: |
       flask run
+  - init: |
+      cd saffron_motion && npm install
+    command: |
+      cd saffron_motion && npm start
 
 vscode:
   extensions:
