@@ -12,9 +12,9 @@ tasks:
     command: |
       flask run
   - init: |
-      cd saffron_motion && npm install
+      cd saffron_motion && yarn install
     command: |
-      npm start
+      cd saffron_motion && yarn start
 
 vscode:
   extensions:
