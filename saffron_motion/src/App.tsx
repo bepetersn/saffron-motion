@@ -33,19 +33,25 @@ function App() {
               <Button>Reset</Button>
             </ButtonGroup>
           </Flex>
-          <Flex justify="center" align="center" w="100%" h="20vh">
+          <Flex justify="center" align="center" w="125%" h="20vh">
             <Box>
-              <Flex alignItems="center">
-                <Text>
-                  Status:
-                  {' '}
-                </Text>
-                <Tag>
-                  <Text fontSize="3vw">Working</Text>
-                </Tag>
-                <Button bgColor="lightSkyBlue">
-                  Toggle to Planning
-                </Button>
+              <Flex flexDirection="row" justify="center" alignItems="center">
+                <Flex>
+                  <Text fontSize="3vw">
+                    Status:
+                    {' '}
+                  </Text>
+                  <Tag bgColor="lightSkyBlue" ml="5px" mr="10px" border="1px solid black">
+                    <Text fontSize="3vw">
+                      Working
+                    </Text>
+                  </Tag>
+                </Flex>
+                <Flex>
+                  <Button bgColor="goldenrod">
+                    Toggle
+                  </Button>
+                </Flex>
               </Flex>
             </Box>
           </Flex>
