@@ -48,6 +48,14 @@ test('renders status', () => {
 
 test('renders status toggle button', () => {
   render(<App />);
-  const buttonElement: HTMLElement = screen.getByText(/toggle to planning/i);
+  const buttonElement: HTMLElement = screen.getByText(/toggle/i);
   expect(buttonElement).toBeInTheDocument();
+});
+
+test('toggles button to working', () => {
+  render(<App />);
+  const statusElement: HTMLElement = screen.getByText(/planning/i);
+  const buttonElement: HTMLElement = screen.getByText(/toggle/i);
+  buttonElement.click();
+  expect(statusElement).toHaveTextContent(/working/i);
 });

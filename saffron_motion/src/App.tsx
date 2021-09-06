@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Box, Tag,
 } from '@chakra-ui/react';
@@ -6,6 +6,10 @@ import './App.css';
 
 function App() {
   const timeInMinutes = 25;
+  const [workingStatus, setWorkingStatus] = useState('Planning');
+  function onStatusToggle() {
+    setWorkingStatus(workingStatus === 'Working' ? 'Planning' : 'Working');
+  }
   return (
     <ChakraProvider>
       <Flex direction="column" align="center" justify="center">
@@ -43,12 +47,12 @@ function App() {
                   </Text>
                   <Tag bgColor="lightSkyBlue" ml="5px" mr="10px" border="1px solid black">
                     <Text fontSize="3vw">
-                      Working
+                      {workingStatus}
                     </Text>
                   </Tag>
                 </Flex>
                 <Flex>
-                  <Button bgColor="goldenrod">
+                  <Button bgColor="goldenrod" onClick={onStatusToggle}>
                     Toggle
                   </Button>
                 </Flex>
