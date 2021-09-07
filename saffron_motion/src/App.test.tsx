@@ -107,3 +107,33 @@ test('start button doesn\'t change status from working', () => {
   startButton.click(); // Nothing happened
   expect(statusElement).toHaveTextContent(STATES.working);
 });
+
+test('reset button doesn\'t change status from not working', () => {
+  render(<App />);
+  const resetButton: HTMLElement = screen.getByText(/reset/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  resetButton.click(); // Nothing happens
+  expect(statusElement).toHaveTextContent(STATES.notWorking);
+});
+
+test('reset button changes status from planning to not working', () => {
+  render(<App />);
+  const resetButton: HTMLElement = screen.getByText(/reset/i);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  startButton.click(); // => Planning
+  resetButton.click(); // => Not Working
+  expect(statusElement).toHaveTextContent(STATES.notWorking);
+});
+
+test('reset button changes status from working to not working', () => {
+  render(<App />);
+  const resetButton: HTMLElement = screen.getByText(/reset/i);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  const toggleButton: HTMLElement = screen.getByText(/toggle/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  startButton.click(); // => Planning
+  toggleButton.click(); // => Working
+  resetButton.click(); // => Not Working
+  expect(statusElement).toHaveTextContent(STATES.notWorking);
+});
