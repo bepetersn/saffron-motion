@@ -11,6 +11,6 @@ def hello_world():
     return 'Hello, World!'
 
 @app.cli.command("init-db")
-def init_db(name):
+def init_db():
     # TODO: Put schema.sql into sqlite 
     pass
