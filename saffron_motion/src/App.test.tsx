@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import App, { STATES } from './App';
 
 test('renders mode toggles', () => {
   render(<App />);
@@ -52,10 +52,58 @@ test('renders status toggle button', () => {
   expect(buttonElement).toBeInTheDocument();
 });
 
-test('toggles button to working', () => {
+test('toggle button changes status from planning to working', () => {
   render(<App />);
-  const statusElement: HTMLElement = screen.getByText(/planning/i);
-  const buttonElement: HTMLElement = screen.getByText(/toggle/i);
-  buttonElement.click();
-  expect(statusElement).toHaveTextContent(/working/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  const toggleButton: HTMLElement = screen.getByText(/toggle/i);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  startButton.click();
+  toggleButton.click();
+  expect(statusElement).toHaveTextContent(STATES.working);
+});
+
+test('toggle button doesn\'t change status from not working to working', () => {
+  render(<App />);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  const toggleButton: HTMLElement = screen.getByText(/toggle/i);
+  toggleButton.click();
+  expect(statusElement).toHaveTextContent(STATES.notWorking);
+});
+
+test('stop button changes status to stopped', () => {
+  render(<App />);
+  const stopButton: HTMLElement = screen.getByText(/stop/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  stopButton.click();
+  expect(statusElement).toHaveTextContent(STATES.stopped);
+});
+
+test('start button changes status from not working to planning', () => {
+  render(<App />);
+  const stopButton: HTMLElement = screen.getByText(/stop/i);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  stopButton.click();
+  startButton.click();
+  expect(statusElement).toHaveTextContent(STATES.defaultDirty);
+});
+
+test('start button doesn\'t change status from planning', () => {
+  render(<App />);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  startButton.click(); // => Planning
+  startButton.click(); // Nothing Happened
+  expect(statusElement).toHaveTextContent(STATES.planning);
+});
+
+test('start button doesn\'t change status from working', () => {
+  render(<App />);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  const toggleButton: HTMLElement = screen.getByText(/toggle/i);
+  startButton.click(); // => Planning
+  toggleButton.click(); // => Working
+  startButton.click(); // Nothing happened
+  expect(statusElement).toHaveTextContent(STATES.working);
 });

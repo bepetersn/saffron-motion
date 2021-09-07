@@ -4,12 +4,48 @@ import {
 } from '@chakra-ui/react';
 import './App.css';
 
+export const STATES = {
+  stopped: 'Stopped',
+  working: 'Working',
+  planning: 'Planning',
+  notWorking: 'Not working',
+  defaultDirty: 'Planning',
+};
+
 function App() {
   const timeInMinutes = 25;
-  const [workingStatus, setWorkingStatus] = useState('Planning');
+  const [workingStatus, setWorkingStatus] = useState(STATES.notWorking);
+
   function onStatusToggle() {
-    setWorkingStatus(workingStatus === 'Working' ? 'Planning' : 'Working');
+    let newStatus = null;
+    if (workingStatus === STATES.working) {
+      newStatus = STATES.planning;
+    } else if (workingStatus === STATES.planning) {
+      newStatus = STATES.working;
+    } else {
+      // do nothing
+    }
+    if (newStatus) {
+      setWorkingStatus(newStatus);
+    }
   }
+
+  function onStop() {
+    setWorkingStatus(STATES.stopped);
+  }
+
+  function onStart() {
+    // The logic is more complex than this:
+    if (workingStatus === STATES.notWorking || workingStatus === STATES.stopped) {
+      setWorkingStatus(STATES.defaultDirty);
+    }
+  }
+
+  function onReset() {
+    // not implemented yet
+    // setWorkingStatus(STATES.default);
+  }
+
   return (
     <ChakraProvider>
       <Flex direction="column" align="center" justify="center">
@@ -32,9 +68,9 @@ function App() {
           </Flex>
           <Flex justify="center" align="center" w="100%" h="20vh">
             <ButtonGroup>
-              <Button>Start</Button>
-              <Button>Stop</Button>
-              <Button>Reset</Button>
+              <Button onClick={() => onStart()}>Start</Button>
+              <Button onClick={() => onStop()}>Stop</Button>
+              <Button onClick={() => onReset()}>Reset</Button>
             </ButtonGroup>
           </Flex>
           <Flex justify="center" align="center" w="125%" h="20vh">
@@ -52,7 +88,7 @@ function App() {
                   </Tag>
                 </Flex>
                 <Flex>
-                  <Button bgColor="goldenrod" onClick={onStatusToggle}>
+                  <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
                     Toggle
                   </Button>
                 </Flex>
