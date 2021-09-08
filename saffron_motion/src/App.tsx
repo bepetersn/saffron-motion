@@ -61,15 +61,14 @@ function App() {
           <Flex justify="center" align="center" w="100%" h="30vh">
             <Center>
               <Text fontSize="8vw">
-                {timeInMinutes}
-                :00
+                {calculateTimeRemaining()}
               </Text>
             </Center>
           </Flex>
           <Flex justify="center" align="center" w="100%" h="20vh">
             <ButtonGroup>
               <Button onClick={() => onStart()}>Start</Button>
-              <Button onClick={() => onStop()}>Stop</Button>
+              <Button onClick={() => onPause()}>Pause</Button>
               <Button onClick={() => onReset()}>Reset</Button>
             </ButtonGroup>
           </Flex>
