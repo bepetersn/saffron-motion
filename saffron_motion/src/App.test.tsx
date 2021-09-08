@@ -150,22 +150,10 @@ test('toggle button should not be visible if paused', () => {
   expect(toggleButton).toBeNull();
 });
 
-test('start button should change the timer', (done) => {
+test('start button should change the timer', () => {
   render(<App />);
   const startButton: HTMLElement = screen.getByText(/start/i);
-  startButton.click(); // => Planning, 25:00
-
-  const checkTimeIsNot = (specificTimeStr: string | RegExp) => {
-    const spectificTimeElement: HTMLElement | null = screen.queryByText(specificTimeStr);
-    expect(spectificTimeElement).toBeNull();
-  };
-
-  setTimeout(() => {
-    try {
-      checkTimeIsNot(/25:00/i);
-      done();
-    } catch (error) {
-      done(error);
-    }
-  }, 1200);
+  startButton.click(); // => Planning
+  const textElement: HTMLElement | null = screen.queryByText(/25:00/i);
+  expect(textElement).toBeNull();
 });

@@ -40,14 +40,13 @@ function App() {
   useEffect(() => {
     if (running) {
       timerId = window.setTimeout(() => {
-        // The timeRemaining will update itself by
+        // the timer will update itself by
         // the forward progression of time,
-        // away from timeStarted, by 1 second.
-        // Therefore, show the new time...
+        // away from timeStarted
         forceUpdate();
       }, 1000);
-      // clear timer if component is unmounted
-      return () => clearTimeout(timerId);
+      // // clear timer if component is unmounted
+      // return () => clearTimeout(timer);
     }
     return () => {
       // do nothing if timer wasn't setup
@@ -66,8 +65,7 @@ function App() {
       - elapsedBeforePause
       - elapsedSincePause
     );
-    // No negative time remaining
-    return formatDateDiff(millisRemaining < 0 ? 0 : millisRemaining);
+    return formatDateDiff(millisRemaining);
   }
 
   function onStatusToggle() {
