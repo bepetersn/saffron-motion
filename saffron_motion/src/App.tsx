@@ -42,7 +42,6 @@ function App() {
         // the forward progression of time,
         // away from timeStarted
         forceUpdate();
-        console.log("effect"); // eslint-disable-line
       }, 1000);
       // // clear timer if component is unmounted
       // return () => clearTimeout(timer);

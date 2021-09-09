@@ -150,19 +150,17 @@ test('toggle button should not be visible if paused', () => {
   expect(toggleButton).toBeNull();
 });
 
-test('start button should change the timer', () => {
+test('start button should change the timer', (done) => {
   render(<App />);
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click(); // => Planning
-  const textElement: HTMLElement | null = screen.queryByText(/25:00/i);
-  expect(textElement).toBeNull();
+  setTimeout(() => { // TODO: Use async methods instead of this hack
+    try {
+      const particularTime25Min: HTMLElement | null = screen.queryByText(/25:00/i);
+      expect(particularTime25Min).toBeNull();
+      done();
+    } catch (error) {
+      done(error);
+    }
+  }, 1100); // NOTE: Wait slightly more than a second
 });
-
-test('start button should change the timer', () => {
-  render(<App />);
-  const startButton: HTMLElement = screen.getByText(/start/i);
-  startButton.click(); // => Planning
-  const textElement: HTMLElement | null = screen.queryByText(/25:00/i);
-  expect(textElement).toBeNull();
-});
-
