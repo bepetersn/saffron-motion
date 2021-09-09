@@ -157,3 +157,12 @@ test('start button should change the timer', () => {
   const textElement: HTMLElement | null = screen.queryByText(/25:00/i);
   expect(textElement).toBeNull();
 });
+
+test('start button should change the timer', () => {
+  render(<App />);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  startButton.click(); // => Planning
+  const textElement: HTMLElement | null = screen.queryByText(/25:00/i);
+  expect(textElement).toBeNull();
+});
+
