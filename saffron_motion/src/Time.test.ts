@@ -6,7 +6,7 @@ test('calc test -- countdown 7sec', () => {
   const lastRecordedTime = Date.now();
   expect(calculateTimeRemaining(
     timeStarted, lastRecordedTime, lastRecordedElapsed,
-  )).toEqual(parseDateDiff('24:53'));
+  )).toBeLessThan(parseDateDiff('24:54'));
 });
 
 test('calc test -- countdown with pause/start', () => {
