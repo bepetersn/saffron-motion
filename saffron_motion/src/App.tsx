@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, {
+  useEffect, useState, useReducer, useRef,
+} from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Box, Tag,
 } from '@chakra-ui/react';
@@ -31,7 +33,7 @@ function App() {
     workingStatus !== STATES.notWorking
     && workingStatus !== STATES.paused);
 
-  let timerId: number = 0;
+  const timerRef = useRef(0);
 
   function onTick() {
     // the timer will update itself by
@@ -40,16 +42,16 @@ function App() {
     forceUpdate();
   }
 
-  function setupTimer() {
+  useEffect(() => {
     if (running) {
-      timerId = window.setTimeout(onTick, 1000);
+      timerRef.current = window.setTimeout(onTick, 1000);
       // // clear timer if component is unmounted
       // return () => clearTimeout(timer);
     }
     return () => {
       // do nothing if timer wasn't setup
     };
-  }
+  });
 
   function onStatusToggle() {
     let newStatus = null;
@@ -80,27 +82,32 @@ function App() {
         lastTimeElapsed: lastTimeElapsed + newElapsed,
         running: false,
       });
-      // clearInterval(timerId); <-- Didn't do anything
+      clearInterval(timerRef.current);
     }
   }
 
   function onStart() {
     if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
       if (!timeStarted) {
-        // only on first start, set timeStarted
         setPomodoroState({
           ...pomodoroState,
+          // only the very first time (not for resuming), set timeStarted
           timeStarted: Date.now(),
+          // Revert to defaultDirty status (planning) on every start;
+          // -- Rather than preserving what status you were in prior to pause --
+          // Kind of an annoying behavior if pausing much at all, but does force
+          // you to actually think about planning; May re-assess this.
           workingStatus: STATES.defaultDirty,
           running: true,
         });
       } else {
-        // record the last time we have seen
-        // information about the timer change
         setPomodoroState({
           ...pomodoroState,
           running: true,
           workingStatus: STATES.defaultDirty,
+          // Record the last time we have seen
+          // information about the timer change
+          // in place of timeStarted
           lastTimeRecorded: Date.now(),
         });
       }
@@ -108,7 +115,7 @@ function App() {
   }
 
   function onReset() {
-    clearTimeout(timerId);
+    clearTimeout(timerRef.current);
     setPomodoroState({
       workingStatus: STATES.notWorking,
       running: false,
@@ -117,8 +124,6 @@ function App() {
       lastTimeElapsed: 0,
     });
   }
-
-  useEffect(setupTimer);
 
   return (
     <ChakraProvider>
