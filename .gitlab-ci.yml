@@ -35,12 +35,16 @@ unit-test-job: # This job runs in the test stage.
     - cd saffron_motion && yarn install && yarn test
     - echo "Code coverage is not established."
 
-lint-test-job: # This job also runs in the test stage.
-  stage: test # It can run at the same time as unit-test-job (in parallel).
-  script:
-    - echo "Linting code... "
-    - echo "Linter not established."
-    - echo "No lint issues found."
+# e2e-test-job: # This job also runs in the test stage.
+#   stage: test # It can run at the same time as unit-test-job (in parallel).
+#   script:
+#     - echo "Testing code... "
+#     - cd saffron_motion && apt update && |
+#       apt install xvfb libgtk2.0-0 libgtk-3-0 |
+#       libgbm-dev libnotify-dev libgconf-2-4 libnss3 |
+#       libxss1 libasound2 libxtst6 xauth |
+#       xvfb && cypress run
+#     - echo "No lint issues found."
 
 deploy-job: # This job runs in the deploy stage.
   stage: deploy # It only runs when *both* jobs in the test stage complete successfully.
