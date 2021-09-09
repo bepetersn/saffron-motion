@@ -19,11 +19,11 @@ function App() {
     workingStatus: STATES.notWorking,
     running: false,
     timeStarted: 0,
-    timeLastPaused: 0,
+    lastTimeRecorded: 0,
     elapsedDuringPause: 0,
   });
   const {
-    workingStatus, running, timeStarted, timeLastPaused,
+    workingStatus, running, timeStarted, lastTimeRecorded,
   } = pomodoroState;
   function setPomodoroStateItems(newState: Object) {
     return setPomodoroState({ ...pomodoroState, ...newState });
@@ -72,7 +72,7 @@ function App() {
       || workingStatus === STATES.planning) {
       setPomodoroStateItems({
         workingStatus: STATES.paused,
-        timeLastPaused: Date.now(),
+        lastTimeRecorded: Date.now(),
         running: false,
       });
       // clearInterval(timerId); <-- Didn't do anything
@@ -104,7 +104,7 @@ function App() {
       workingStatus: STATES.notWorking,
       running: false,
       timeStarted: 0,
-      timeLastPaused: 0,
+      lastTimeRecorded: 0,
     });
   }
 
@@ -123,7 +123,7 @@ function App() {
           <Flex justify="center" align="center" w="100%" h="30vh">
             <Center>
               <Text fontSize="8vw">
-                {calculateTimeRemaining()}
+                {calculateTimeRemaining(timeStarted, lastTimeRecorded)}
               </Text>
             </Center>
           </Flex>
