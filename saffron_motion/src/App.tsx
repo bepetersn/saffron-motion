@@ -2,7 +2,7 @@ import React, { useEffect, useState, useReducer } from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Box, Tag,
 } from '@chakra-ui/react';
-import { calculateTimeRemaining } from './Time';
+import { calculateTimeRemaining, formatDateDiff } from './Time';
 import './App.css';
 
 export const STATES = {
@@ -20,10 +20,11 @@ function App() {
     running: false,
     timeStarted: 0,
     lastTimeRecorded: 0,
-    elapsedDuringPause: 0,
+    lastTimeElapsed: 0,
   });
   const {
-    workingStatus, running, timeStarted, lastTimeRecorded,
+    workingStatus, running, timeStarted,
+    lastTimeRecorded, lastTimeElapsed,
   } = pomodoroState;
   function setPomodoroStateItems(newState: Object) {
     return setPomodoroState({ ...pomodoroState, ...newState });
@@ -70,9 +71,12 @@ function App() {
   function onPause() {
     if (workingStatus === STATES.working
       || workingStatus === STATES.planning) {
+      const lastRecorded = lastTimeRecorded || timeStarted;
+      const newElapsed = Date.now() - lastRecorded;
       setPomodoroStateItems({
         workingStatus: STATES.paused,
         lastTimeRecorded: Date.now(),
+        lastTimeElapsed: lastTimeElapsed + newElapsed,
         running: false,
       });
       // clearInterval(timerId); <-- Didn't do anything
@@ -82,17 +86,19 @@ function App() {
   function onStart() {
     if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
       if (!timeStarted) {
+        // only on first start, set timeStarted
         setPomodoroStateItems({
           timeStarted: Date.now(),
           workingStatus: STATES.defaultDirty,
           running: true,
         });
       } else {
-        // If starting from paused, resume with
-        // the original start time intact
+        // record the last time we have seen
+        // information about the timer change
         setPomodoroStateItems({
           running: true,
           workingStatus: STATES.defaultDirty,
+          lastTimeRecorded: Date.now(),
         });
       }
     }
@@ -100,11 +106,12 @@ function App() {
 
   function onReset() {
     clearTimeout(timerId);
-    setPomodoroStateItems({
+    setPomodoroState({
       workingStatus: STATES.notWorking,
       running: false,
       timeStarted: 0,
       lastTimeRecorded: 0,
+      lastTimeElapsed: 0,
     });
   }
 
@@ -123,7 +130,9 @@ function App() {
           <Flex justify="center" align="center" w="100%" h="30vh">
             <Center>
               <Text fontSize="8vw">
-                {calculateTimeRemaining(timeStarted, lastTimeRecorded)}
+                {formatDateDiff(calculateTimeRemaining(
+                  timeStarted, lastTimeRecorded, lastTimeElapsed,
+                ))}
               </Text>
             </Center>
           </Flex>
