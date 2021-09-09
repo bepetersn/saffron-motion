@@ -2,6 +2,7 @@ import React, { useEffect, useState, useReducer } from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Box, Tag,
 } from '@chakra-ui/react';
+import { calculateTimeRemaining } from './Time';
 import './App.css';
 
 export const STATES = {
@@ -11,20 +12,6 @@ export const STATES = {
   notWorking: 'Not working',
   defaultDirty: 'Planning',
 };
-
-// 25 minutes in milliseconds
-const INITIAL_TIME_IN_MILLIS = 25 * 60 * 1000;
-
-function formatDateDiff(dateDiff: number) {
-  /* convert to mm:ss format */
-  const minutes = Math.floor(dateDiff / (1000 * 60));
-  const seconds = Math.floor(
-    (dateDiff / 1000) - (minutes * 60) // eslint-disable-line comma-dangle
-  );
-  const minutesStr = String(minutes).padStart(2, '0');
-  const secondsStr = String(seconds).padStart(2, '0');
-  return `${minutesStr}:${secondsStr}`;
-}
 
 function App() {
   const [, forceUpdate] = useReducer((_) => _ + 1, 0);
@@ -52,21 +39,6 @@ function App() {
       // do nothing if timer wasn't setup
     };
   });
-
-  function calculateTimeRemaining() {
-    let elapsedSincePause = 0;
-    let elapsedBeforePause = 0;
-    if (timeLastPaused !== 0) {
-      elapsedSincePause = Date.now() - timeLastPaused;
-      elapsedBeforePause = timeLastPaused - timeStarted;
-    }
-    const millisRemaining = (
-      INITIAL_TIME_IN_MILLIS
-      - elapsedBeforePause
-      - elapsedSincePause
-    );
-    return formatDateDiff(millisRemaining);
-  }
 
   function onStatusToggle() {
     let newStatus = null;
