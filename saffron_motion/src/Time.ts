@@ -1,5 +1,5 @@
 // 25 minutes in milliseconds
-const INITIAL_TIME_IN_MILLIS = 25 * 60 * 1000;
+export const INITIAL_TIME_IN_MILLIS = 25 * 60 * 1000;
 
 export function parseDateDiff(dateDiffStr: string) {
   /* convert from mm:ss to diff */

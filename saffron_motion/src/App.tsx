@@ -1,10 +1,10 @@
 import React, {
-  useEffect, useState, useReducer, useRef,
+  useState, useRef,
 } from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Box, Tag,
 } from '@chakra-ui/react';
-import { calculateTimeRemaining, formatDateDiff } from './Time';
+import { formatDateDiff, INITIAL_TIME_IN_MILLIS } from './Time';
 import './App.css';
 
 export const STATES = {
@@ -15,8 +15,8 @@ export const STATES = {
   defaultDirty: 'Planning',
 };
 
-function App() {
-  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+export default function App() {
+  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIME_IN_MILLIS);
   const [pomodoroState, setPomodoroState] = useState({
     workingStatus: STATES.notWorking,
     running: false,
@@ -29,29 +29,11 @@ function App() {
     lastTimeRecorded, lastTimeElapsed,
   } = pomodoroState;
 
-  const statusToggleShouldAppear = (
-    workingStatus !== STATES.notWorking
-    && workingStatus !== STATES.paused);
-
   const timerRef = useRef(0);
 
   function onTick() {
-    // the timer will update itself by
-    // the forward progression of time,
-    // away from timeStarted
-    forceUpdate();
+    setTimeRemaining((time) => (time > 0 ? time - 1000 : 0));
   }
-
-  useEffect(() => {
-    if (running) {
-      timerRef.current = window.setTimeout(onTick, 1000);
-      // // clear timer if component is unmounted
-      // return () => clearTimeout(timer);
-    }
-    return () => {
-      // do nothing if timer wasn't setup
-    };
-  });
 
   function onStatusToggle() {
     let newStatus = null;
@@ -70,9 +52,29 @@ function App() {
     }
   }
 
+  function onStart() {
+    if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
+      timerRef.current = window.setInterval(onTick, 1000);
+      if (!timeStarted) {
+        setPomodoroState({
+          ...pomodoroState,
+          timeStarted: Date.now(),
+          workingStatus: STATES.defaultDirty,
+          running: true,
+        });
+      } else {
+        setPomodoroState({
+          ...pomodoroState,
+          running: true,
+          workingStatus: STATES.defaultDirty,
+          lastTimeRecorded: Date.now(),
+        });
+      }
+    }
+  }
+
   function onPause() {
-    if (workingStatus === STATES.working
-      || workingStatus === STATES.planning) {
+    if (running) {
       const lastRecorded = lastTimeRecorded || timeStarted;
       const newElapsed = Date.now() - lastRecorded;
       setPomodoroState({
@@ -83,39 +85,14 @@ function App() {
         running: false,
       });
       clearInterval(timerRef.current);
-    }
-  }
-
-  function onStart() {
-    if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
-      if (!timeStarted) {
-        setPomodoroState({
-          ...pomodoroState,
-          // only the very first time (not for resuming), set timeStarted
-          timeStarted: Date.now(),
-          // Revert to defaultDirty status (planning) on every start;
-          // -- Rather than preserving what status you were in prior to pause --
-          // Kind of an annoying behavior if pausing much at all, but does force
-          // you to actually think about planning; May re-assess this.
-          workingStatus: STATES.defaultDirty,
-          running: true,
-        });
-      } else {
-        setPomodoroState({
-          ...pomodoroState,
-          running: true,
-          workingStatus: STATES.defaultDirty,
-          // Record the last time we have seen
-          // information about the timer change
-          // in place of timeStarted
-          lastTimeRecorded: Date.now(),
-        });
-      }
+      timerRef.current = 0;
     }
   }
 
   function onReset() {
-    clearTimeout(timerRef.current);
+    clearInterval(timerRef.current);
+    timerRef.current = 0;
+    setTimeRemaining(INITIAL_TIME_IN_MILLIS);
     setPomodoroState({
       workingStatus: STATES.notWorking,
       running: false,
@@ -140,9 +117,7 @@ function App() {
           <Flex justify="center" align="center" w="100%" h="30vh">
             <Center>
               <Text fontSize="8vw">
-                {formatDateDiff(calculateTimeRemaining(
-                  timeStarted, lastTimeRecorded, lastTimeElapsed,
-                ))}
+                {formatDateDiff(timeRemaining)}
               </Text>
             </Center>
           </Flex>
@@ -167,7 +142,7 @@ function App() {
                     </Text>
                   </Tag>
                 </Flex>
-                {statusToggleShouldAppear && (
+                {running && (
                   <Flex>
                     <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
                       Toggle
@@ -182,5 +157,3 @@ function App() {
     </ChakraProvider>
   );
 }
-
-export default App;
