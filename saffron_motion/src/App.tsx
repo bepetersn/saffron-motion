@@ -32,21 +32,24 @@ function App() {
     && workingStatus !== STATES.paused);
 
   let timerId: number = 0;
-  useEffect(() => {
+
+  function onTick() {
+    // the timer will update itself by
+    // the forward progression of time,
+    // away from timeStarted
+    forceUpdate();
+  }
+
+  function setupTimer() {
     if (running) {
-      timerId = window.setTimeout(() => {
-        // the timer will update itself by
-        // the forward progression of time,
-        // away from timeStarted
-        forceUpdate();
-      }, 1000);
+      timerId = window.setTimeout(onTick, 1000);
       // // clear timer if component is unmounted
       // return () => clearTimeout(timer);
     }
     return () => {
       // do nothing if timer wasn't setup
     };
-  });
+  }
 
   function onStatusToggle() {
     let newStatus = null;
@@ -114,6 +117,8 @@ function App() {
       lastTimeElapsed: 0,
     });
   }
+
+  useEffect(setupTimer);
 
   return (
     <ChakraProvider>
