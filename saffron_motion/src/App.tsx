@@ -26,9 +26,6 @@ function App() {
     workingStatus, running, timeStarted,
     lastTimeRecorded, lastTimeElapsed,
   } = pomodoroState;
-  function setPomodoroStateItems(newState: Object) {
-    return setPomodoroState({ ...pomodoroState, ...newState });
-  }
 
   const statusToggleShouldAppear = (
     workingStatus !== STATES.notWorking
@@ -61,7 +58,8 @@ function App() {
       // do nothing
     }
     if (newStatus) {
-      setPomodoroStateItems({
+      setPomodoroState({
+        ...pomodoroState,
         workingStatus: newStatus,
       });
     }
@@ -72,7 +70,8 @@ function App() {
       || workingStatus === STATES.planning) {
       const lastRecorded = lastTimeRecorded || timeStarted;
       const newElapsed = Date.now() - lastRecorded;
-      setPomodoroStateItems({
+      setPomodoroState({
+        ...pomodoroState,
         workingStatus: STATES.paused,
         lastTimeRecorded: Date.now(),
         lastTimeElapsed: lastTimeElapsed + newElapsed,
@@ -86,7 +85,8 @@ function App() {
     if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
       if (!timeStarted) {
         // only on first start, set timeStarted
-        setPomodoroStateItems({
+        setPomodoroState({
+          ...pomodoroState,
           timeStarted: Date.now(),
           workingStatus: STATES.defaultDirty,
           running: true,
@@ -94,7 +94,8 @@ function App() {
       } else {
         // record the last time we have seen
         // information about the timer change
-        setPomodoroStateItems({
+        setPomodoroState({
+          ...pomodoroState,
           running: true,
           workingStatus: STATES.defaultDirty,
           lastTimeRecorded: Date.now(),
