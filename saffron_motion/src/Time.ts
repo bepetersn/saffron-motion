@@ -23,7 +23,7 @@ export function calculateTimeRemaining(
   timeStarted: number, lastRecordedTime: number, lastRecordedElapsed: number,
 ) {
   const lastRecorded = lastRecordedTime || timeStarted;
-  // NOTE: Avoid a small race condition via ternary expression
+  // NOTE: Avoid a small race condition via ternary expression?
   const newElapsed = timeStarted ? (Date.now() - lastRecorded) : 0;
   const millisRemaining = (
     INITIAL_TIME_IN_MILLIS

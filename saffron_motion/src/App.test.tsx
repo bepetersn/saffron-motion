@@ -162,5 +162,5 @@ test('start button should change the timer', (done) => {
     } catch (error) {
       done(error);
     }
-  }, 1100); // NOTE: Wait slightly more than a second
+  }, 2000); // NOTE: Wait more than a second... for some reason...
 });
