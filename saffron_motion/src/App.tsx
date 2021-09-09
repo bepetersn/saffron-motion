@@ -14,11 +14,21 @@ export const STATES = {
 };
 
 function App() {
-  const [, forceUpdate] = useReducer((_) => _ + 1, 0);
-  const [workingStatus, setWorkingStatus] = useState(STATES.notWorking);
-  const [running, setRunning] = useState(false);
-  const [timeLastPaused, setTimeLastPaused] = useState(0);
-  const [timeStarted, setTimeStarted] = useState(0);
+  const [, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [pomodoroState, setPomodoroState] = useState({
+    workingStatus: STATES.notWorking,
+    running: false,
+    timeStarted: 0,
+    timeLastPaused: 0,
+    elapsedDuringPause: 0,
+  });
+  const {
+    workingStatus, running, timeStarted, timeLastPaused,
+  } = pomodoroState;
+  function setPomodoroStateItems(newState: Object) {
+    return setPomodoroState({ ...pomodoroState, ...newState });
+  }
+
   const statusToggleShouldAppear = (
     workingStatus !== STATES.notWorking
     && workingStatus !== STATES.paused);
@@ -31,6 +41,7 @@ function App() {
         // the forward progression of time,
         // away from timeStarted
         forceUpdate();
+        console.log("effect"); // eslint-disable-line
       }, 1000);
       // // clear timer if component is unmounted
       // return () => clearTimeout(timer);
@@ -50,37 +61,51 @@ function App() {
       // do nothing
     }
     if (newStatus) {
-      setWorkingStatus(newStatus);
+      setPomodoroStateItems({
+        status: newStatus,
+      });
     }
   }
 
   function onPause() {
     if (workingStatus === STATES.working
       || workingStatus === STATES.planning) {
-      setWorkingStatus(STATES.paused);
-      setTimeLastPaused(Date.now());
-      setRunning(false);
+      setPomodoroStateItems({
+        workingStatus: STATES.paused,
+        timeLastPaused: Date.now(),
+        running: false,
+      });
+      // clearInterval(timerId); <-- Didn't do anything
     }
   }
 
   function onStart() {
     if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
-      setWorkingStatus(STATES.defaultDirty);
       if (!timeStarted) {
+        setPomodoroStateItems({
+          timeStarted: Date.now(),
+          workingStatus: STATES.defaultDirty,
+          running: true,
+        });
+      } else {
         // If starting from paused, resume with
         // the original start time intact
-        setTimeStarted(Date.now());
+        setPomodoroStateItems({
+          running: true,
+          workingStatus: STATES.defaultDirty,
+        });
       }
-      setRunning(true);
     }
   }
 
   function onReset() {
-    setWorkingStatus(STATES.notWorking);
-    setRunning(false);
-    setTimeStarted(0);
-    setTimeLastPaused(0);
     clearTimeout(timerId);
+    setPomodoroStateItems({
+      workingStatus: STATES.notWorking,
+      running: false,
+      timeStarted: 0,
+      timeLastPaused: 0,
+    });
   }
 
   return (
