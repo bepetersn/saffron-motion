@@ -62,7 +62,7 @@ function App() {
     }
     if (newStatus) {
       setPomodoroStateItems({
-        status: newStatus,
+        workingStatus: newStatus,
       });
     }
   }
