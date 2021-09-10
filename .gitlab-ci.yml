@@ -18,6 +18,7 @@ image: nikolaik/python-nodejs:latest
 stages: # List of stages for jobs, and their order of execution
   - build
   - test
+  - publish
   - deploy
 
 variables:
@@ -50,9 +51,20 @@ unit-test-job: # This job runs in the test stage.
 #       xvfb && cypress run
 #     - echo "No lint issues found."
 
+publish-job:
+  image: docker:latest
+  stage: publish
+  services:
+    - docker:dind
+  script:
+    - docker build -t $TAG_COMMIT -t $TAG_LATEST .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $TAG_COMMIT
+    - docker push $TAG_LATEST
+
+
 deploy-job: # This job runs in the deploy stage.
   stage: deploy # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Deploying application..."
-    - docker build -it . -t main
     - echo "Deploy target not established."
