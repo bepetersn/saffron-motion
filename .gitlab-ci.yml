@@ -70,7 +70,7 @@ deploy-job: # This job runs in the deploy stage.
     url: https://saffron-motion.vercel.app/
   script:
     - echo "Deploying application..."
-    - export PUSH_REPO="https://gitlab-ci-token:$SM_ACCESS_TOKEN@gitlab.com/saffron-motion.git"
+    - export PUSH_REPO="https://git:$SM_ACCESS_TOKEN@gitlab.com/bepetersn/saffron-motion.git"
     - git clone https://gitlab.com/bepetersn/saffron-motion.git
     - cd saffron-motion
     - git config user.name "Gitlab CI runnner"
