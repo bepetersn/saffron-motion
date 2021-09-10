@@ -1,6 +1,6 @@
 FROM nikolaik/python-nodejs:latest
 
-EXPOSE 3000
+EXPOSE 5000
 WORKDIR /root
 ADD saffron_motion .
 RUN yarn install && yarn build
