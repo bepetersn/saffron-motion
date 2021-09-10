@@ -82,7 +82,7 @@ deploy-job: # This job runs in the deploy stage.
     - git config user.name "Gitlab CI runnner"
     - git config user.email "bepetersn@gmail.com"
     - git checkout prod
-    - git merge main
+    - git merge main --no-ff -m "Merge main onto prod [skip-ci]"
     - git remote set-url --push origin "${PUSH_REPO}"
     - git push origin prod
     - echo "Deploy target not established."
