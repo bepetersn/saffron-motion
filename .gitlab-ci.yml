@@ -65,6 +65,11 @@ publish-job:
 
 deploy-job: # This job runs in the deploy stage.
   stage: deploy # It only runs when *both* jobs in the test stage complete successfully.
+  environment: 
+    name: vercel
+    url: https://saffron-motion.vercel.app/
   script:
     - echo "Deploying application..."
+    - git remote add self https://gitlab-ci-token:$PROJECT_ACCESS_TOKEN@gitlab.com/saffron-motion.git
+    - git push self prod # Vercel watches this branch
     - echo "Deploy target not established."
