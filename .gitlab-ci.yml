@@ -20,6 +20,10 @@ stages: # List of stages for jobs, and their order of execution
   - test
   - deploy
 
+variables:
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+
 build-job: # This job runs in the build stage, which runs first.
   stage: build
   script:
@@ -50,4 +54,5 @@ deploy-job: # This job runs in the deploy stage.
   stage: deploy # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Deploying application..."
+    - docker build -it . -t main
     - echo "Deploy target not established."
