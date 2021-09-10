@@ -70,6 +70,13 @@ deploy-job: # This job runs in the deploy stage.
     url: https://saffron-motion.vercel.app/
   script:
     - echo "Deploying application..."
-    - git remote add self https://gitlab-ci-token:$SM_ACCESS_TOKEN@gitlab.com/saffron-motion.git
-    - git push self prod # Vercel watches this branch
+    - export PUSH_REPO="https://gitlab-ci-token:$SM_ACCESS_TOKEN@gitlab.com/saffron-motion.git"
+    - git clone https://gitlab.com/bepetersn/saffron-motion.git
+    - cd saffron-motion
+    - git config user.name "Gitlab CI runnner"
+    - git config user.email "bepetersn@gmail.com"
+    - git checkout prod
+    - git merge main
+    - git remote set-url --push origin "${PUSH_REPO}"
+    - git push origin prod
     - echo "Deploy target not established."
