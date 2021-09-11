@@ -1,3 +1,3 @@
 # Saffron Motion
 
-Integrated web app for productivity / task management 
+Tiny integrated web app for personal productivity / task management
