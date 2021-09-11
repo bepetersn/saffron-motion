@@ -2,7 +2,7 @@ import React, {
   useState, useRef,
 } from 'react';
 import {
-  CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Box, Tag,
+  CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Tag,
 } from '@chakra-ui/react';
 import { formatDateDiff, INITIAL_TIME_IN_MILLIS } from './Time';
 import './App.css';
@@ -128,29 +128,30 @@ export default function App() {
               <Button onClick={() => onReset()}>Reset</Button>
             </ButtonGroup>
           </Flex>
-          <Flex justify="center" align="center" w="125%" h="20vh">
-            <Box>
-              <Flex flexDirection="row" justify="center" alignItems="center">
-                <Flex>
-                  <Text fontSize="3vw">
-                    Status:
-                    {' '}
-                  </Text>
-                  <Tag bgColor="lightSkyBlue" ml="5px" mr="10px" border="1px solid black">
-                    <Text fontSize="3vw">
-                      {workingStatus}
-                    </Text>
-                  </Tag>
-                </Flex>
-                {running && (
-                  <Flex>
-                    <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
-                      Toggle
-                    </Button>
-                  </Flex>
-                )}
+          <Flex flex-direction="column" flexWrap="wrap" justify="center" align="center" h="20vh" w="30vw">
+            <Flex flexDirection="row" justify="center" alignItems="center">
+              <Text fontSize="3vw">
+                Status:
+                {' '}
+              </Text>
+              <Tag bgColor="lightSkyBlue" ml="5px" mr="10px" border="1px solid black">
+                <Text fontSize="3vw">
+                  {workingStatus}
+                </Text>
+              </Tag>
+            </Flex>
+            {running && (
+              <Flex>
+                <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
+                  Toggle
+                </Button>
               </Flex>
-            </Box>
+            )}
+            {running && (
+              <Flex justify="center">
+                <input placeholder="What are you planning to work on?" />
+              </Flex>
+            )}
           </Flex>
         </Stack>
       </Flex>

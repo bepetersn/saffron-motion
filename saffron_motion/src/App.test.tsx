@@ -164,3 +164,11 @@ test('start button should change the timer', (done) => {
     }
   }, 2000); // NOTE: Wait more than a second... for some reason...
 });
+
+test('planning input should be visible if working / planning', () => {
+  render(<App />);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  startButton.click(); // => Planning
+  const planningInput: HTMLElement = screen.getByPlaceholderText('What are you planning to work on?');
+  expect(planningInput).toBeInTheDocument();
+});
