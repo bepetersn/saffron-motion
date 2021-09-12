@@ -2,7 +2,7 @@ import React, {
   useState, useRef,
 } from 'react';
 import {
-  CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Stack, Center, Text, Tag,
+  CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Text, Tag, Input,
 } from '@chakra-ui/react';
 import { formatDateDiff, INITIAL_TIME_IN_MILLIS } from './Time';
 import './App.css';
@@ -104,56 +104,54 @@ export default function App() {
 
   return (
     <ChakraProvider>
-      <Flex direction="column" align="center" justify="center">
+      <Flex direction="row" justifyContent="space-around">
         <CSSReset />
-        <Stack>
-          <Flex justify="center" align="center" w="100%" h="20vh">
+        <Flex id="timerContainer" flexDirection="column" justifyContent="stretch">
+          <Flex id="modeButtons" w="100%" h="20vh" alignItems="center">
             <ButtonGroup>
               <Button>Pomodoro</Button>
               <Button>Short Break</Button>
               <Button>Long Break</Button>
             </ButtonGroup>
           </Flex>
-          <Flex justify="center" align="center" w="100%" h="30vh">
-            <Center>
-              <Text fontSize="8vw">
-                {formatDateDiff(timeRemaining)}
-              </Text>
-            </Center>
+          <Flex id="timer" w="100%" h="30vh" justify="center" align="center">
+            <Text fontSize="8vw">
+              {formatDateDiff(timeRemaining)}
+            </Text>
           </Flex>
-          <Flex justify="center" align="center" w="100%" h="20vh">
+          <Flex id="timerButtons" justify="center" align="center" w="100%" h="20vh">
             <ButtonGroup>
               <Button onClick={() => onStart()}>Start</Button>
               <Button onClick={() => onPause()}>Pause</Button>
               <Button onClick={() => onReset()}>Reset</Button>
             </ButtonGroup>
           </Flex>
-          <Flex flex-direction="column" flexWrap="wrap" justify="center" align="center" h="20vh" w="30vw">
-            <Flex flexDirection="row" justify="center" alignItems="center">
+        </Flex>
+        <Flex id="statusContainer" flex-direction="column" flexWrap="wrap" justify="center" align="center" h="20vh" w="30vw">
+          <Flex flexDirection="row" alignItems="center">
+            <Text fontSize="3vw">
+              Status:
+              {' '}
+            </Text>
+            <Tag bgColor="lightSkyBlue" ml="5px" mr="10px" border="1px solid black">
               <Text fontSize="3vw">
-                Status:
-                {' '}
+                {workingStatus}
               </Text>
-              <Tag bgColor="lightSkyBlue" ml="5px" mr="10px" border="1px solid black">
-                <Text fontSize="3vw">
-                  {workingStatus}
-                </Text>
-              </Tag>
-            </Flex>
-            {running && (
-              <Flex>
-                <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
-                  Toggle
-                </Button>
-              </Flex>
-            )}
-            {running && (
-              <Flex justify="center">
-                <input placeholder="What are you planning to work on?" />
-              </Flex>
-            )}
+            </Tag>
           </Flex>
-        </Stack>
+          {running && (
+            <Flex>
+              <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
+                Toggle
+              </Button>
+            </Flex>
+          )}
+          {running && (
+            <Flex justify="center">
+              <Input placeholder="Working on...?" />
+            </Flex>
+          )}
+        </Flex>
       </Flex>
     </ChakraProvider>
   );
