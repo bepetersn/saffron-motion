@@ -1,4 +1,4 @@
-import { STATES } from './App';
+import { STATES, APP_NAME } from './App';
 
 /* eslint-disable */
 // Got "no-unused-vars", but it is used
@@ -21,7 +21,8 @@ type PomodoroState = {
   timeStarted: number,
   lastRecordedTime: number,
   lastRecordedElapsed: number,
-  workingStatus: string
+  workingStatus: string,
+  docTitle: string,
 }
 
 type TimerState = Pick<PomodoroState,
@@ -69,6 +70,7 @@ function reducer(state: PomodoroState, action: Action): PomodoroState {
         timeStarted: 0,
         lastRecordedTime: 0,
         lastRecordedElapsed: 0,
+        docTitle: APP_NAME,
       };
     case ActionType.TOGGLE_WORKING_STATUS:
       if (state.workingStatus === STATES.working) {

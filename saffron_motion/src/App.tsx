@@ -8,6 +8,8 @@ import { formatDateDiff, calculateTimeRemaining } from './Time';
 import './App.css';
 import reducer, { ActionType, PomodoroState, TimerState } from './Reducer';
 
+const APP_NAME = 'Saffron Motion';
+
 export const STATES = {
   paused: 'Paused',
   working: 'Working',
@@ -18,6 +20,7 @@ export const STATES = {
 
 function initPomodoroState(): PomodoroState {
   return {
+    docTitle: APP_NAME,
     workingStatus: STATES.notWorking,
     running: false,
     timeStarted: 0,
@@ -31,7 +34,7 @@ function initPomodoroState(): PomodoroState {
 export default function App(): ReactElement {
   const [, allowPassageOfTimeToBeReflected] = useReducer((x) => x + 1, 0);
   const [state, dispatch] = useReducer(reducer, null, initPomodoroState);
-  const { workingStatus, running } = state;
+  const { workingStatus, running, docTitle } = state;
   const timerState: TimerState = {
     running: state.running,
     timeStarted: state.timeStarted,
@@ -40,10 +43,10 @@ export default function App(): ReactElement {
   };
 
   useEffect(() => {
-    // NOTE below: The timer is created in the closure above where running must be true.
-    // Therefore this will only cleanup after a timer has indeed been setup.
-    // It will only be called when running is changing (see deps below).
-    // Therefore, running is changing to false, and it's appropriate to clear the timer.
+    // NOTE below:
+    // Create a timer in the following closure iff running is true.
+    // Only schedule cleanup if running was true for this render.
+    // Running must be changing to false if called again, so it's appropriate to clear the timer.
     let timerId = 0;
     if (running) {
       timerId = window.setInterval(() => {
