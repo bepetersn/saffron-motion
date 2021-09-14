@@ -21,15 +21,14 @@ export function formatDateDiff(dateDiff: number): string {
   return `${minutesStr}:${secondsStr}`;
 }
 
-export function calculateTimeRemaining(timeState: TimerState): number {
-  const { timeStarted, lastRecordedTime, lastRecordedElapsed } = timeState;
+export function calculateTimeRemaining(timerState: TimerState): number {
+  const { lastRecordedTime, lastRecordedElapsed } = timerState;
 
-  const lastRecorded = lastRecordedTime || timeStarted || Date.now();
+  const lastRecorded = lastRecordedTime || Date.now();
   const newElapsed = Date.now() - lastRecorded;
-  const millisRemaining = (
-    INITIAL_TIME_IN_MILLIS
-    - lastRecordedElapsed
-    - newElapsed
-  );
-  return millisRemaining;
+  const totalElapsed = lastRecordedElapsed + newElapsed;
+  if (totalElapsed < INITIAL_TIME_IN_MILLIS) {
+    return INITIAL_TIME_IN_MILLIS - totalElapsed;
+  }
+  return 0;
 }
