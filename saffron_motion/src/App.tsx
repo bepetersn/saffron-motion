@@ -1,11 +1,12 @@
 import React, {
-  useState, useRef,
+  useReducer, ReactElement, useEffect,
 } from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Text, Tag, Input,
 } from '@chakra-ui/react';
-import { formatDateDiff, INITIAL_TIME_IN_MILLIS } from './Time';
+import { formatDateDiff, calculateTimeRemaining } from './Time';
 import './App.css';
+import reducer, { ActionType, PomodoroState, TimerState } from './Reducer';
 
 export const STATES = {
   paused: 'Paused',
@@ -15,92 +16,45 @@ export const STATES = {
   defaultDirty: 'Planning',
 };
 
-export default function App() {
-  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIME_IN_MILLIS);
-  const [pomodoroState, setPomodoroState] = useState({
+function initPomodoroState(): PomodoroState {
+  return {
     workingStatus: STATES.notWorking,
     running: false,
     timeStarted: 0,
-    lastTimeRecorded: 0,
-    lastTimeElapsed: 0,
-  });
-  const {
-    workingStatus, running, timeStarted,
-    lastTimeRecorded, lastTimeElapsed,
-  } = pomodoroState;
+    lastRecordedTime: 0,
+    lastRecordedElapsed: 0,
+  };
+}
 
-  const timerRef = useRef(0);
+// type AppProps = {};
 
-  function onTick() {
-    setTimeRemaining((time) => (time > 0 ? time - 1000 : 0));
-  }
+export default function App(): ReactElement {
+  const [, tickTheClock] = useReducer((x) => x + 1, 0);
+  const [state, dispatch] = useReducer(reducer, null, initPomodoroState);
+  const { workingStatus, running } = state;
+  const timerState: TimerState = {
+    timeStarted: state.timeStarted,
+    lastRecordedTime: state.lastRecordedTime,
+    lastRecordedElapsed: state.lastRecordedElapsed,
+  };
 
-  function onStatusToggle() {
-    let newStatus = null;
-    if (workingStatus === STATES.working) {
-      newStatus = STATES.planning;
-    } else if (workingStatus === STATES.planning) {
-      newStatus = STATES.working;
-    } else {
-      // do nothing
-    }
-    if (newStatus) {
-      setPomodoroState({
-        ...pomodoroState,
-        workingStatus: newStatus,
-      });
-    }
-  }
-
-  function onStart() {
-    if (workingStatus === STATES.notWorking || workingStatus === STATES.paused) {
-      timerRef.current = window.setInterval(onTick, 1000);
-      if (!timeStarted) {
-        setPomodoroState({
-          ...pomodoroState,
-          timeStarted: Date.now(),
-          workingStatus: STATES.defaultDirty,
-          running: true,
-        });
-      } else {
-        setPomodoroState({
-          ...pomodoroState,
-          running: true,
-          workingStatus: STATES.defaultDirty,
-          lastTimeRecorded: Date.now(),
-        });
-      }
-    }
-  }
-
-  function onPause() {
+  useEffect(() => {
+    let timerId = 0;
     if (running) {
-      const lastRecorded = lastTimeRecorded || timeStarted;
-      const newElapsed = Date.now() - lastRecorded;
-      setPomodoroState({
-        ...pomodoroState,
-        workingStatus: STATES.paused,
-        lastTimeRecorded: Date.now(),
-        lastTimeElapsed: lastTimeElapsed + newElapsed,
-        running: false,
-      });
-      clearInterval(timerRef.current);
-      timerRef.current = 0;
+      timerId = window.setInterval(() => {
+        tickTheClock(); // Re-render to show a current timeRemaining calculation
+      }, 1000);
     }
-  }
-
-  function onReset() {
-    clearInterval(timerRef.current);
-    timerRef.current = 0;
-    setTimeRemaining(INITIAL_TIME_IN_MILLIS);
-    setPomodoroState({
-      workingStatus: STATES.notWorking,
-      running: false,
-      timeStarted: 0,
-      lastTimeRecorded: 0,
-      lastTimeElapsed: 0,
-    });
-  }
+    // NOTE below: The timer is created in the closure above where running must be true.
+    // Therefore this will only cleanup after a timer has indeed been setup.
+    // It will only be called when running is changing (see deps below).
+    // Therefore, running is changing to false, and it's appropriate to clear the timer.
+    return () => {
+      if (running) {
+        clearInterval(timerId);
+      }
+    };
+  }, [running]); // Setup a new interval each time we change running (iff running, see above)
 
   return (
     <ChakraProvider>
@@ -116,14 +70,14 @@ export default function App() {
           </Flex>
           <Flex id="timer" w="100%" h="30vh" justify="center" align="center">
             <Text fontSize="8vw">
-              {formatDateDiff(timeRemaining)}
+              {formatDateDiff(calculateTimeRemaining(timerState))}
             </Text>
           </Flex>
           <Flex id="timerButtons" justify="center" align="center" w="100%" h="20vh">
             <ButtonGroup>
-              <Button onClick={() => onStart()}>Start</Button>
-              <Button onClick={() => onPause()}>Pause</Button>
-              <Button onClick={() => onReset()}>Reset</Button>
+              <Button onClick={() => dispatch({ type: ActionType.START })}>Start</Button>
+              <Button onClick={() => dispatch({ type: ActionType.PAUSE })}>Pause</Button>
+              <Button onClick={() => dispatch({ type: ActionType.RESET })}>Reset</Button>
             </ButtonGroup>
           </Flex>
         </Flex>
@@ -141,7 +95,10 @@ export default function App() {
           </Flex>
           {running && (
             <Flex>
-              <Button bgColor="goldenrod" onClick={() => onStatusToggle()}>
+              <Button
+                bgColor="goldenrod"
+                onClick={() => dispatch({ type: ActionType.TOGGLE_WORKING_STATUS })}
+              >
                 Toggle
               </Button>
             </Flex>

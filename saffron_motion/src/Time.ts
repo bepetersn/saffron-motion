@@ -1,14 +1,16 @@
+import { TimerState } from './Reducer';
+
 // 25 minutes in milliseconds
 export const INITIAL_TIME_IN_MILLIS = 25 * 60 * 1000;
 
-export function parseDateDiff(dateDiffStr: string) {
+export function parseDateDiff(dateDiffStr: string): number {
   /* convert from mm:ss to diff */
   const [minutesStr, secondsStr] = dateDiffStr.split(':');
   const [minutes, seconds] = [parseInt(minutesStr, 10), parseInt(secondsStr, 10)];
   return (minutes * 60 * 1000) + (seconds * 1000);
 }
 
-export function formatDateDiff(dateDiff: number) {
+export function formatDateDiff(dateDiff: number): string {
   /* convert diff to mm:ss format */
   const minutes = Math.floor(dateDiff / (1000 * 60));
   const seconds = Math.floor(
@@ -19,9 +21,9 @@ export function formatDateDiff(dateDiff: number) {
   return `${minutesStr}:${secondsStr}`;
 }
 
-export function calculateTimeRemaining(
-  timeStarted: number, lastRecordedTime: number, lastRecordedElapsed: number,
-) {
+export function calculateTimeRemaining(timeState: TimerState): number {
+  const { timeStarted, lastRecordedTime, lastRecordedElapsed } = timeState;
+
   const lastRecorded = lastRecordedTime || timeStarted;
   // NOTE: Avoid a small race condition via ternary expression?
   const newElapsed = timeStarted ? (Date.now() - lastRecorded) : 0;
