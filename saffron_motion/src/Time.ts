@@ -24,9 +24,8 @@ export function formatDateDiff(dateDiff: number): string {
 export function calculateTimeRemaining(timeState: TimerState): number {
   const { timeStarted, lastRecordedTime, lastRecordedElapsed } = timeState;
 
-  const lastRecorded = lastRecordedTime || timeStarted;
-  // NOTE: Avoid a small race condition via ternary expression?
-  const newElapsed = timeStarted ? (Date.now() - lastRecorded) : 0;
+  const lastRecorded = lastRecordedTime || timeStarted || Date.now();
+  const newElapsed = Date.now() - lastRecorded;
   const millisRemaining = (
     INITIAL_TIME_IN_MILLIS
     - lastRecordedElapsed
