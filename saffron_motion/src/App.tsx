@@ -29,32 +29,34 @@ function initPomodoroState(): PomodoroState {
 // type AppProps = {};
 
 export default function App(): ReactElement {
-  const [, tickTheClock] = useReducer((x) => x + 1, 0);
+  const [, allowPassageOfTimeToBeReflected] = useReducer((x) => x + 1, 0);
   const [state, dispatch] = useReducer(reducer, null, initPomodoroState);
   const { workingStatus, running } = state;
   const timerState: TimerState = {
+    running: state.running,
     timeStarted: state.timeStarted,
     lastRecordedTime: state.lastRecordedTime,
     lastRecordedElapsed: state.lastRecordedElapsed,
   };
 
   useEffect(() => {
-    let timerId = 0;
-    if (running) {
-      timerId = window.setInterval(() => {
-        tickTheClock(); // Re-render to show a current timeRemaining calculation
-      }, 1000);
-    }
     // NOTE below: The timer is created in the closure above where running must be true.
     // Therefore this will only cleanup after a timer has indeed been setup.
     // It will only be called when running is changing (see deps below).
     // Therefore, running is changing to false, and it's appropriate to clear the timer.
+    let timerId = 0;
+    if (running) {
+      timerId = window.setInterval(() => {
+        allowPassageOfTimeToBeReflected();
+      }, 1000);
+    }
+
     return () => {
       if (running) {
         clearInterval(timerId);
       }
     };
-  }, [running]); // Setup a new interval each time we change running (iff running, see above)
+  }, [running]);
 
   return (
     <ChakraProvider>

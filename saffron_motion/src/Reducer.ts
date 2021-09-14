@@ -24,11 +24,8 @@ type PomodoroState = {
   workingStatus: string
 }
 
-type TimerState = {
-  timeStarted: number,
-  lastRecordedTime: number,
-  lastRecordedElapsed: number,
-}
+type TimerState = Pick<PomodoroState,
+  'running' | 'timeStarted' | 'lastRecordedTime' | 'lastRecordedElapsed'>;
 
 function reducer(state: PomodoroState, action: Action): PomodoroState {
   const newElapsed = Date.now() - state.lastRecordedTime;
