@@ -1,14 +1,14 @@
 import React, {
-  useReducer, ReactElement, useEffect,
+  useReducer, ReactElement, useEffect, useLayoutEffect,
 } from 'react';
 import {
   CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Text, Tag, Input,
 } from '@chakra-ui/react';
-import { formatDateDiff, calculateTimeRemaining } from './Time';
+import { getFormattedTimeRemaining } from './Time';
 import './App.css';
 import reducer, { ActionType, PomodoroState, TimerState } from './Reducer';
 
-const APP_NAME = 'Saffron Motion';
+// const APP_NAME = 'Saffron Motion';
 
 export const STATES = {
   paused: 'Paused',
@@ -18,23 +18,21 @@ export const STATES = {
   defaultDirty: 'Planning',
 };
 
-function initPomodoroState(): PomodoroState {
-  return {
-    docTitle: APP_NAME,
-    workingStatus: STATES.notWorking,
-    running: false,
-    timeStarted: 0,
-    lastRecordedTime: 0,
-    lastRecordedElapsed: 0,
-  };
-}
+export const INITIAL_POMODORO_STATE: PomodoroState = {
+  workingStatus: STATES.notWorking,
+  running: false,
+  timeStarted: 0,
+  lastRecordedTime: 0,
+  lastRecordedElapsed: 0,
+  tick: 0,
+};
 
 // type AppProps = {};
 
 export default function App(): ReactElement {
-  const [, allowPassageOfTimeToBeReflected] = useReducer((x) => x + 1, 0);
-  const [state, dispatch] = useReducer(reducer, null, initPomodoroState);
-  const { workingStatus, running, docTitle } = state;
+  const [tick, showPassageOfTime] = useReducer((x) => x + 1, 0);
+  const [state, dispatch] = useReducer(reducer, INITIAL_POMODORO_STATE);
+  const { workingStatus, running } = state;
   const timerState: TimerState = {
     running: state.running,
     timeStarted: state.timeStarted,
@@ -44,13 +42,15 @@ export default function App(): ReactElement {
 
   useEffect(() => {
     // NOTE below:
-    // Create a timer in the following closure iff running is true.
+    // If changing running and it's now true, we have ActionType.START.
+    // So, create a timer in the following closure iff running is true.
     // Only schedule cleanup if running was true for this render.
     // Running must be changing to false if called again, so it's appropriate to clear the timer.
     let timerId = 0;
     if (running) {
+      showPassageOfTime(); // Updating state is necessary to flush changes
       timerId = window.setInterval(() => {
-        allowPassageOfTimeToBeReflected();
+        showPassageOfTime(); // Update about each second
       }, 1000);
     }
 
@@ -60,6 +60,11 @@ export default function App(): ReactElement {
       }
     };
   }, [running]);
+
+  useLayoutEffect(() => {
+    // Layout because it's nice to have the document title closely in sync
+    document.title = getFormattedTimeRemaining(timerState);
+  }, [tick]);
 
   return (
     <ChakraProvider>
@@ -75,7 +80,7 @@ export default function App(): ReactElement {
           </Flex>
           <Flex id="timer" w="100%" h="30vh" justify="center" align="center">
             <Text fontSize="8vw">
-              {formatDateDiff(calculateTimeRemaining(timerState))}
+              {getFormattedTimeRemaining(timerState)}
             </Text>
           </Flex>
           <Flex id="timerButtons" justify="center" align="center" w="100%" h="20vh">

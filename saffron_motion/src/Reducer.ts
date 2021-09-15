@@ -1,4 +1,4 @@
-import { STATES, APP_NAME } from './App';
+import { STATES, INITIAL_POMODORO_STATE } from './App';
 
 /* eslint-disable */
 // Got "no-unused-vars", but it is used
@@ -22,7 +22,7 @@ type PomodoroState = {
   lastRecordedTime: number,
   lastRecordedElapsed: number,
   workingStatus: string,
-  docTitle: string,
+  tick: number,
 }
 
 type TimerState = Pick<PomodoroState,
@@ -63,15 +63,10 @@ function reducer(state: PomodoroState, action: Action): PomodoroState {
         lastRecordedElapsed: state.lastRecordedElapsed + newElapsed,
         running: false,
       };
+
     case ActionType.RESET:
-      return {
-        workingStatus: STATES.notWorking,
-        running: false,
-        timeStarted: 0,
-        lastRecordedTime: 0,
-        lastRecordedElapsed: 0,
-        docTitle: APP_NAME,
-      };
+      return INITIAL_POMODORO_STATE;
+
     case ActionType.TOGGLE_WORKING_STATUS:
       if (state.workingStatus === STATES.working) {
         return {

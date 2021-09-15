@@ -32,3 +32,7 @@ export function calculateTimeRemaining(timerState: TimerState): number {
   }
   return 0;
 }
+
+export function getFormattedTimeRemaining(timerState: TimerState): string {
+  return formatDateDiff(calculateTimeRemaining(timerState));
+}
