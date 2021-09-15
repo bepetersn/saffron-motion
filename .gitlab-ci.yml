@@ -15,7 +15,7 @@
 
 workflow:
   rules:
-    - if: $CI_COMMIT_MESSAGE =~ /[skip-ci]$/
+    - if: $CI_COMMIT_MESSAGE =~ /\[skip-ci\]$/
       when: never
     - if: '$CI_PIPELINE_SOURCE == "push"'
 
@@ -63,15 +63,14 @@ publish-job:
   services:
     - docker:dind
   script:
-    - docker build -t $TAG_COMMIT -t $TAG_LATEST -f frontend.Dockerfile . 
+    - docker build -t $TAG_COMMIT -t $TAG_LATEST -f frontend.Dockerfile .
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
     - docker push $TAG_COMMIT
     - docker push $TAG_LATEST
 
-
 deploy-job: # This job runs in the deploy stage.
   stage: deploy # It only runs when *both* jobs in the test stage complete successfully.
-  environment: 
+  environment:
     name: vercel
     url: https://saffron-motion.vercel.app/
   script:
