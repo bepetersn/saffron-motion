@@ -69,10 +69,10 @@ export default function App(): ReactElement {
   return (
     <ChakraProvider>
       <Flex>
-        <Flex direction="row" justifyContent="space-around" m="5vw">
-          <CSSReset />
-          <Flex id="timerContainer" flexDirection="column" justifyContent="stretch">
-            <Flex id="modeButtons" w="100%" h="20vh" alignItems="center">
+        <CSSReset />
+        <Flex direction="row" justify="space-around" m="5vw" grow={1}>
+          <Flex id="timerContainer" direction="column" justify="stretch" grow={1}>
+            <Flex id="modeButtons" w="100%" h="20vh" align="center" justify="center">
               <ButtonGroup>
                 <Button>Pomodoro</Button>
                 <Button>Short Break</Button>
@@ -118,7 +118,7 @@ export default function App(): ReactElement {
             </Flex>
             {running && (
               <Flex justify="center">
-                <Input placeholder="What are you working on...?" />
+                <Input name={workingStatus === 'working' ? 'readonly' : ''} placeholder="What are you working on...?" />
               </Flex>
             )}
           </Flex>
