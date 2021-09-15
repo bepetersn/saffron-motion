@@ -1,8 +1,8 @@
 import React, {
-  useReducer, ReactElement, useEffect, useLayoutEffect,
+  useReducer, ReactElement, useEffect, useLayoutEffect, ChangeEvent,
 } from 'react';
 import {
-  CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Text, Tag, Input,
+  CSSReset, Flex, ChakraProvider, ButtonGroup, Button, Text, Tag, Textarea,
 } from '@chakra-ui/react';
 import { getFormattedTimeRemaining } from './Time';
 import './App.css';
@@ -75,6 +75,11 @@ export default function App(): ReactElement {
   const toggleButtonProps = (planningText === '')
     ? { isDisabled: true } : {};
 
+  const onPlanningInputChange = (e: ChangeEvent<HTMLTextAreaElement>) => dispatch({
+    type: ActionType.CHANGE_PLAN,
+    payload: (e.target as HTMLTextAreaElement).value,
+  });
+
   return (
     <ChakraProvider>
       <Flex>
@@ -128,14 +133,11 @@ export default function App(): ReactElement {
             </Flex>
             {running && (
               <Flex justify="center">
-                <Input
+                <Textarea
                   {...planningInputProps}
-                  type="text"
+                  value={planningText}
                   placeholder={PLANNING_PLACEHOLDER_TEXT}
-                  onChange={(e) => dispatch({
-                    type: ActionType.CHANGE_PLAN,
-                    payload: e.target.value,
-                  })}
+                  onChange={onPlanningInputChange}
                 />
               </Flex>
             )}

@@ -43,9 +43,9 @@ test('toggle button changes status from planning to working and back', () => {
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click();
 
-  const planningInput: HTMLInputElement = screen.getByPlaceholderText(
+  const planningInput: HTMLTextAreaElement = screen.getByPlaceholderText(
     PLANNING_PLACEHOLDER_TEXT,
-  ) as HTMLInputElement;
+  ) as HTMLTextAreaElement;
   userEvent.type(planningInput, 'Finish example project');
 
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
@@ -99,9 +99,9 @@ test('start button doesn\'t change status from working', () => {
   const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
   startButton.click(); // => Planning
 
-  const planningInput: HTMLInputElement = screen.getByPlaceholderText(
+  const planningInput: HTMLTextAreaElement = screen.getByPlaceholderText(
     PLANNING_PLACEHOLDER_TEXT,
-  ) as HTMLInputElement;
+  ) as HTMLTextAreaElement;
   userEvent.type(planningInput, 'Finish example project');
 
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
@@ -200,9 +200,9 @@ test('planning input should be readonly if working', () => {
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click(); // => Planning
 
-  const planningInput: HTMLInputElement = screen.getByPlaceholderText(
+  const planningInput: HTMLTextAreaElement = screen.getByPlaceholderText(
     PLANNING_PLACEHOLDER_TEXT,
-  ) as HTMLInputElement;
+  ) as HTMLTextAreaElement;
   userEvent.type(planningInput, 'Finish example project');
 
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
@@ -215,7 +215,7 @@ test('toggle button should be disabled if planning input is empty', () => {
   const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click(); // => Planning
-  const planningInput: HTMLInputElement = screen.getByPlaceholderText('What are you working on...?') as HTMLInputElement;
+  const planningInput: HTMLTextAreaElement = screen.getByPlaceholderText('What are you working on...?') as HTMLTextAreaElement;
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
   planningInput.value = 'Example project';
   toggleButton.click(); // => Does nothing
