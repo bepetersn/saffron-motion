@@ -33,7 +33,8 @@ module.exports = {
       tsx: 'never',
     }],
     'no-use-before-define': 'off',
-    '@typescript-eslint/no-use-before-define': ['error']
+    '@typescript-eslint/no-use-before-define': ['error'],
+    'react/jsx-props-no-spreading': 'off',
   },
   settings: {
     'import/resolver': {

@@ -66,6 +66,9 @@ export default function App(): ReactElement {
     document.title = getFormattedTimeRemaining(timerState);
   }, [tick]);
 
+  const planningInputProps = (workingStatus === STATES.working)
+    ? { readonly: 'readonly' } : {};
+
   return (
     <ChakraProvider>
       <Flex>
@@ -118,7 +121,7 @@ export default function App(): ReactElement {
             </Flex>
             {running && (
               <Flex justify="center">
-                <Input name={workingStatus === 'working' ? 'readonly' : ''} placeholder="What are you working on...?" />
+                <Input {...planningInputProps} placeholder="What are you working on...?" />
               </Flex>
             )}
           </Flex>

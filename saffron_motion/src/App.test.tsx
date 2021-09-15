@@ -172,3 +172,21 @@ test('planning input should be visible if working / planning', () => {
   const planningInput: HTMLElement = screen.getByPlaceholderText('What are you working on...?');
   expect(planningInput).toBeInTheDocument();
 });
+
+test('planning input should not be readonly if planning', () => {
+  render(<App />);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  startButton.click(); // => Planning
+  const planningInput: HTMLElement = screen.getByPlaceholderText('What are you working on...?');
+  expect(planningInput).not.toHaveAttribute('readonly');
+});
+
+test('planning input should be readonly if working', () => {
+  render(<App />);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  startButton.click(); // => Planning
+  const planningInput: HTMLElement = screen.getByPlaceholderText('What are you working on...?');
+  const toggleButton: HTMLElement = screen.getByText(/toggle/i);
+  toggleButton.click();
+  expect(planningInput).toHaveAttribute('readonly');
+});
