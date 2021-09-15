@@ -169,6 +169,6 @@ test('planning input should be visible if working / planning', () => {
   render(<App />);
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click(); // => Planning
-  const planningInput: HTMLElement = screen.getByPlaceholderText('What are you planning to work on?');
+  const planningInput: HTMLElement = screen.getByPlaceholderText('What are you working on...?');
   expect(planningInput).toBeInTheDocument();
 });

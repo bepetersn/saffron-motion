@@ -115,7 +115,7 @@ export default function App(): ReactElement {
           )}
           {running && (
             <Flex justify="center">
-              <Input placeholder="Working on...?" />
+              <Input placeholder="What are you working on...?" />
             </Flex>
           )}
         </Flex>

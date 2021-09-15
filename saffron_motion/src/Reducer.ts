@@ -74,7 +74,7 @@ function reducer(state: PomodoroState, action: Action): PomodoroState {
           workingStatus: STATES.planning,
         };
       }
-      if (state.workingStatus === STATES.paused) {
+      if (state.workingStatus === STATES.planning) {
         return {
           ...state,
           workingStatus: STATES.working,
