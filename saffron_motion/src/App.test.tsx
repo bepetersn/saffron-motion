@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App, { STATES } from './App';
+import userEvent from '@testing-library/user-event';
+import App, { STATES, PLANNING_PLACEHOLDER_TEXT } from './App';
 
 test('renders mode toggles', () => {
   render(<App />);
@@ -41,8 +42,15 @@ test('toggle button changes status from planning to working and back', () => {
   const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click();
+
+  const planningInput: HTMLInputElement = screen.getByPlaceholderText(
+    PLANNING_PLACEHOLDER_TEXT,
+  ) as HTMLInputElement;
+  userEvent.type(planningInput, 'Finish example project');
+
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
   toggleButton.click();
+
   expect(statusElement).toHaveTextContent(STATES.working);
   toggleButton.click();
   expect(statusElement).toHaveTextContent(STATES.planning);
@@ -90,6 +98,12 @@ test('start button doesn\'t change status from working', () => {
   const startButton: HTMLElement = screen.getByText(/start/i);
   const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
   startButton.click(); // => Planning
+
+  const planningInput: HTMLInputElement = screen.getByPlaceholderText(
+    PLANNING_PLACEHOLDER_TEXT,
+  ) as HTMLInputElement;
+  userEvent.type(planningInput, 'Finish example project');
+
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
   toggleButton.click(); // => Working
   startButton.click(); // Nothing happened
@@ -185,8 +199,26 @@ test('planning input should be readonly if working', () => {
   render(<App />);
   const startButton: HTMLElement = screen.getByText(/start/i);
   startButton.click(); // => Planning
-  const planningInput: HTMLElement = screen.getByPlaceholderText('What are you working on...?');
+
+  const planningInput: HTMLInputElement = screen.getByPlaceholderText(
+    PLANNING_PLACEHOLDER_TEXT,
+  ) as HTMLInputElement;
+  userEvent.type(planningInput, 'Finish example project');
+
   const toggleButton: HTMLElement = screen.getByText(/toggle/i);
   toggleButton.click();
   expect(planningInput).toHaveAttribute('readonly');
+});
+
+test('toggle button should be disabled if planning input is empty', () => {
+  render(<App />);
+  const statusElement: HTMLElement = screen.getByText(STATES.notWorking);
+  const startButton: HTMLElement = screen.getByText(/start/i);
+  startButton.click(); // => Planning
+  const planningInput: HTMLInputElement = screen.getByPlaceholderText('What are you working on...?') as HTMLInputElement;
+  const toggleButton: HTMLElement = screen.getByText(/toggle/i);
+  planningInput.value = 'Example project';
+  toggleButton.click(); // => Does nothing
+  expect(statusElement).toHaveTextContent(/planning/i); // button shouldn't work
+  expect(toggleButton).toHaveAttribute('disabled'); // button should be disabled
 });

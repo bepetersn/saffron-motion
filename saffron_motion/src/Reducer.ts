@@ -7,6 +7,7 @@ enum ActionType {
   PAUSE = 'PAUSE',
   RESET = 'RESET',
   TOGGLE_WORKING_STATUS = 'TOGGLE_WORKING_STATUS',
+  CHANGE_PLAN = 'CHANGE_PLAN',
 }
 /* eslint-enable */
 
@@ -14,14 +15,16 @@ type Action =
   { type: ActionType.START } |
   { type: ActionType.PAUSE } |
   { type: ActionType.RESET } |
-  { type: ActionType.TOGGLE_WORKING_STATUS }
+  { type: ActionType.TOGGLE_WORKING_STATUS } |
+  { type: ActionType.CHANGE_PLAN, payload: string }
 
 type PomodoroState = {
   running: boolean,
   timeStarted: number,
   lastRecordedTime: number,
   lastRecordedElapsed: number,
-  workingStatus: string,
+  workingStatus: string, // TODO: Should be enum of STATES
+  planningText: string,
   tick: number,
 }
 
@@ -81,6 +84,12 @@ function reducer(state: PomodoroState, action: Action): PomodoroState {
         };
       }
       return state;
+    case ActionType.CHANGE_PLAN:
+      return {
+        ...state,
+        planningText: action.payload,
+      };
+
     default:
       throw new Error();
   }

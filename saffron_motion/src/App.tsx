@@ -20,6 +20,7 @@ export const STATES = {
 
 export const INITIAL_POMODORO_STATE: PomodoroState = {
   workingStatus: STATES.notWorking,
+  planningText: '',
   running: false,
   timeStarted: 0,
   lastRecordedTime: 0,
@@ -27,12 +28,14 @@ export const INITIAL_POMODORO_STATE: PomodoroState = {
   tick: 0,
 };
 
+export const PLANNING_PLACEHOLDER_TEXT = 'What are you working on...?';
+
 // type AppProps = {};
 
 export default function App(): ReactElement {
   const [tick, showPassageOfTime] = useReducer((x) => x + 1, 0);
   const [state, dispatch] = useReducer(reducer, INITIAL_POMODORO_STATE);
-  const { workingStatus, running } = state;
+  const { workingStatus, running, planningText } = state;
   const timerState: TimerState = {
     running: state.running,
     timeStarted: state.timeStarted,
@@ -67,7 +70,10 @@ export default function App(): ReactElement {
   }, [tick]);
 
   const planningInputProps = (workingStatus === STATES.working)
-    ? { readonly: 'readonly' } : {};
+    ? { isReadOnly: true } : {};
+
+  const toggleButtonProps = (planningText === '')
+    ? { isDisabled: true } : {};
 
   return (
     <ChakraProvider>
@@ -111,6 +117,7 @@ export default function App(): ReactElement {
               {running && (
                 <Flex alignSelf="center">
                   <Button
+                    {...toggleButtonProps}
                     bgColor="goldenrod"
                     onClick={() => dispatch({ type: ActionType.TOGGLE_WORKING_STATUS })}
                   >
@@ -121,7 +128,15 @@ export default function App(): ReactElement {
             </Flex>
             {running && (
               <Flex justify="center">
-                <Input {...planningInputProps} placeholder="What are you working on...?" />
+                <Input
+                  {...planningInputProps}
+                  type="text"
+                  placeholder={PLANNING_PLACEHOLDER_TEXT}
+                  onChange={(e) => dispatch({
+                    type: ActionType.CHANGE_PLAN,
+                    payload: e.target.value,
+                  })}
+                />
               </Flex>
             )}
           </Flex>
